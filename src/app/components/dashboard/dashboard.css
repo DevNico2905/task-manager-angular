@@ -22,15 +22,9 @@
 }
 
 .logo-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   width: 32px;
   height: 32px;
-  background: #3b82f6;
-  border-radius: 8px;
-  font-size: 1rem;
-  color: white;
 }
 
 .header h1 {
