@@ -31,8 +31,23 @@ export class LoginComponent {
   }
 
   async onSubmit() {
-    if (!this.email || !this.password) {
+    if (this.loading) return;
+
+    const email = this.email.trim();
+    const password = this.password;
+
+    if (!email || !password) {
       this.error = 'Completa todos los campos.';
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.error = 'Correo no válido.';
+      return;
+    }
+
+    if (password.length < 6) {
+      this.error = 'La contraseña debe tener al menos 6 caracteres.';
       return;
     }
 
@@ -42,17 +57,36 @@ export class LoginComponent {
 
     try {
       if (this.isRegister) {
-        await this.authService.signUp(this.email, this.password);
+        await this.authService.signUp(email, password);
         this.success = 'Cuenta creada. Revisa tu correo para confirmar.';
         this.isRegister = false;
       } else {
-        await this.authService.signIn(this.email, this.password);
+        await this.authService.signIn(email, password);
         this.router.navigate(['/dashboard']);
       }
     } catch (err: any) {
-      this.error = err.message || 'Ocurrió un error.';
+      this.error = this.mapAuthError(err);
     } finally {
       this.loading = false;
     }
+  }
+
+  private mapAuthError(err: any): string {
+    const code: string = err?.code ?? err?.error_code ?? '';
+    const msg: string = err?.message ?? '';
+
+    if (code === 'invalid_credentials' || /invalid login credentials/i.test(msg)) {
+      return 'Correo o contraseña incorrectos. Si aún no tienes cuenta, regístrate.';
+    }
+    if (code === 'email_not_confirmed') {
+      return 'Confirma tu correo antes de iniciar sesión.';
+    }
+    if (code === 'user_already_exists' || /already registered/i.test(msg)) {
+      return 'Ya existe una cuenta con ese correo.';
+    }
+    if (/failed to fetch|network/i.test(msg)) {
+      return 'No se pudo conectar con el servidor. Revisa tu conexión.';
+    }
+    return msg || 'Ocurrió un error.';
   }
 }
