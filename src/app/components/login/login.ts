@@ -57,9 +57,15 @@ export class LoginComponent {
 
     try {
       if (this.isRegister) {
-        await this.authService.signUp(email, password);
-        this.success = 'Cuenta creada. Revisa tu correo para confirmar.';
-        this.isRegister = false;
+        const data = await this.authService.signUp(email, password);
+        if (data.session) {
+          this.router.navigate(['/dashboard']);
+        } else if (data.user && data.user.identities?.length === 0) {
+          this.error = 'Ya existe una cuenta con ese correo.';
+        } else {
+          this.success = 'Cuenta creada. Revisa tu correo para confirmar.';
+          this.isRegister = false;
+        }
       } else {
         await this.authService.signIn(email, password);
         this.router.navigate(['/dashboard']);
@@ -83,6 +89,16 @@ export class LoginComponent {
     }
     if (code === 'user_already_exists' || /already registered/i.test(msg)) {
       return 'Ya existe una cuenta con ese correo.';
+    }
+    if (code === 'weak_password' || /password.*weak|password should be/i.test(msg)) {
+      return 'La contraseña es demasiado débil. Usa una más segura.';
+    }
+    if (
+      code === 'over_email_send_rate_limit' ||
+      code === 'over_request_rate_limit' ||
+      /rate limit/i.test(msg)
+    ) {
+      return 'Demasiados intentos. Espera unos minutos antes de volver a intentarlo.';
     }
     if (/failed to fetch|network/i.test(msg)) {
       return 'No se pudo conectar con el servidor. Revisa tu conexión.';
