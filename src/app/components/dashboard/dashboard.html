@@ -1,0 +1,197 @@
+<div class="dashboard">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <span class="logo-icon">✓</span>
+      <h1>TaskFlow</h1>
+    </div>
+    <div class="header-right">
+      <span class="user-email">{{ userEmail }}</span>
+      <button class="btn-logout" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-number">{{ stats.total }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number pending">{{ stats.pendiente }}</span>
+      <span class="stat-label">Pendientes</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number progress">{{ stats.en_progreso }}</span>
+      <span class="stat-label">En progreso</span>
+    </div>
+    <div class="stat">
+      <span class="stat-number done">{{ stats.completada }}</span>
+      <span class="stat-label">Completadas</span>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Buscar tareas..."
+      />
+    </div>
+
+    <div class="filters">
+      <select [(ngModel)]="filterStatus">
+        <option value="todas">Todos los estados</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="en_progreso">En progreso</option>
+        <option value="completada">Completada</option>
+      </select>
+
+      <select [(ngModel)]="filterPriority">
+        <option value="todas">Todas las prioridades</option>
+        <option value="alta">Alta</option>
+        <option value="media">Media</option>
+        <option value="baja">Baja</option>
+      </select>
+    </div>
+
+    <button class="btn-new" (click)="openNewTask()">+ Nueva tarea</button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading">Cargando tareas...</div>
+  }
+
+  <!-- Task Columns -->
+  @if (!loading) {
+    <div class="columns">
+      <!-- Pendientes -->
+      <div class="column">
+        <div class="column-header pending-header">
+          <span class="column-dot pending-dot"></span>
+          Pendientes ({{ tasksByStatus.pendiente.length }})
+        </div>
+        @for (task of tasksByStatus.pendiente; track task.id) {
+          <div class="task-card">
+            <div class="task-top">
+              <button
+                class="btn-check"
+                (click)="toggleComplete(task)"
+                title="Marcar completada"
+              ></button>
+              <div class="task-info" (click)="openEditTask(task)">
+                <h4>{{ task.title }}</h4>
+                @if (task.description) {
+                  <p class="task-desc">{{ task.description }}</p>
+                }
+              </div>
+            </div>
+            <div class="task-meta">
+              <span class="priority-badge {{ task.priority }}">
+                {{ getPriorityLabel(task.priority) }}
+              </span>
+              @if (task.due_date) {
+                <span class="due-date" [class.overdue]="isOverdue(task.due_date)">
+                  📅 {{ task.due_date }}
+                </span>
+              }
+              <button class="btn-delete" (click)="deleteTask(task)">🗑</button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty">Sin tareas pendientes</p>
+        }
+      </div>
+
+      <!-- En progreso -->
+      <div class="column">
+        <div class="column-header progress-header">
+          <span class="column-dot progress-dot"></span>
+          En progreso ({{ tasksByStatus.en_progreso.length }})
+        </div>
+        @for (task of tasksByStatus.en_progreso; track task.id) {
+          <div class="task-card">
+            <div class="task-top">
+              <button
+                class="btn-check"
+                (click)="toggleComplete(task)"
+                title="Marcar completada"
+              ></button>
+              <div class="task-info" (click)="openEditTask(task)">
+                <h4>{{ task.title }}</h4>
+                @if (task.description) {
+                  <p class="task-desc">{{ task.description }}</p>
+                }
+              </div>
+            </div>
+            <div class="task-meta">
+              <span class="priority-badge {{ task.priority }}">
+                {{ getPriorityLabel(task.priority) }}
+              </span>
+              @if (task.due_date) {
+                <span class="due-date" [class.overdue]="isOverdue(task.due_date)">
+                  📅 {{ task.due_date }}
+                </span>
+              }
+              <button class="btn-delete" (click)="deleteTask(task)">🗑</button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty">Sin tareas en progreso</p>
+        }
+      </div>
+
+      <!-- Completadas -->
+      <div class="column">
+        <div class="column-header done-header">
+          <span class="column-dot done-dot"></span>
+          Completadas ({{ tasksByStatus.completada.length }})
+        </div>
+        @for (task of tasksByStatus.completada; track task.id) {
+          <div class="task-card completed">
+            <div class="task-top">
+              <button
+                class="btn-check checked"
+                (click)="toggleComplete(task)"
+                title="Reabrir tarea"
+              >✓</button>
+              <div class="task-info" (click)="openEditTask(task)">
+                <h4>{{ task.title }}</h4>
+                @if (task.description) {
+                  <p class="task-desc">{{ task.description }}</p>
+                }
+              </div>
+            </div>
+            <div class="task-meta">
+              <span class="priority-badge {{ task.priority }}">
+                {{ getPriorityLabel(task.priority) }}
+              </span>
+              @if (task.due_date) {
+                <span class="due-date">📅 {{ task.due_date }}</span>
+              }
+              <button class="btn-delete" (click)="deleteTask(task)">🗑</button>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty">Sin tareas completadas</p>
+        }
+      </div>
+    </div>
+
+    @if (filteredTasks.length === 0 && tasks.length > 0) {
+      <p class="no-results">No se encontraron tareas con esos filtros.</p>
+    }
+  }
+</div>
+
+<!-- Task Form Modal -->
+<app-task-form
+  [visible]="showForm"
+  [task]="editingTask"
+  (save)="onSaveTask($event)"
+  (close)="closeForm()"
+/>
