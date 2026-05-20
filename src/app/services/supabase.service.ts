@@ -9,7 +9,12 @@ export class SupabaseService {
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
-      environment.supabaseKey
+      environment.supabaseKey,
+      {
+        auth: {
+          lock: async (_name, _acquireTimeout, fn) => fn(),
+        },
+      }
     );
   }
 
