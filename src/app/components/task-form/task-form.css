@@ -1,8 +1,16 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(2, 6, 23, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 100;
+  animation: overlay-in 0.2s var(--ease) both;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal {
@@ -10,13 +18,25 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   width: 90%;
   max-width: 500px;
   z-index: 101;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-lg);
+  animation: modal-in 0.25s var(--ease) both;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) translateY(0);
+  }
 }
 
 .modal-header {
@@ -24,27 +44,32 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--border);
 }
 
 .modal-header h3 {
-  color: #f1f5f9;
-  font-size: 1.1rem;
+  color: var(--text);
+  font-size: 1.15rem;
   font-weight: 600;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
 .btn-close {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+  transition: color 0.2s var(--ease), background 0.2s var(--ease);
 }
 
 .btn-close:hover {
-  color: #f1f5f9;
+  color: var(--text);
+  background: rgba(148, 163, 184, 0.1);
 }
 
 .modal-body {
@@ -57,10 +82,10 @@
 
 .form-group label {
   display: block;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 500;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -69,22 +94,23 @@
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 0.65rem 0.85rem;
-  background: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 0.5rem;
-  color: #f1f5f9;
+  padding: 0.7rem 0.9rem;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
   font-size: 0.9rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
   box-sizing: border-box;
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: #3b82f6;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
 }
 
 .form-group textarea {
@@ -102,23 +128,29 @@
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--border);
 }
 
 .btn-primary {
-  padding: 0.6rem 1.25rem;
-  background: #3b82f6;
+  padding: 0.65rem 1.35rem;
+  background: var(--gradient-accent);
   color: white;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: 0 8px 20px -8px var(--accent-glow);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), opacity 0.2s var(--ease);
 }
 
-.btn-primary:hover {
-  background: #2563eb;
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px -8px var(--accent-glow);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-primary:disabled {
@@ -127,19 +159,20 @@
 }
 
 .btn-secondary {
-  padding: 0.6rem 1.25rem;
+  padding: 0.65rem 1.35rem;
   background: transparent;
-  color: #94a3b8;
-  border: 1px solid #334155;
-  border-radius: 0.5rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease);
 }
 
 .btn-secondary:hover {
-  background: #334155;
-  color: #f1f5f9;
+  background: var(--surface-hover);
+  color: var(--text);
+  border-color: var(--border-strong);
 }
 
 @media (max-width: 500px) {

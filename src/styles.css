@@ -1,4 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Surfaces */
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-sunken: #0f172a;
+  --surface-hover: #273449;
+
+  /* Borders */
+  --border: #2a3852;
+  --border-strong: #3b4a63;
+
+  /* Text */
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+
+  /* Accent */
+  --accent: #3b82f6;
+  --accent-2: #6366f1;
+  --accent-hover: #2563eb;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+  --accent-glow: rgba(59, 130, 246, 0.22);
+  --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+
+  /* Status */
+  --warn: #fbbf24;
+  --success: #22c55e;
+  --danger: #ef4444;
+
+  /* Radii */
+  --radius-sm: 0.55rem;
+  --radius: 0.85rem;
+  --radius-lg: 1.15rem;
+  --radius-pill: 999px;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.4);
+  --shadow: 0 10px 30px -12px rgba(2, 6, 23, 0.6);
+  --shadow-lg: 0 28px 64px -16px rgba(2, 6, 23, 0.7);
+  --ring: 0 0 0 3px var(--accent-glow);
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 *,
 *::before,
@@ -14,26 +58,39 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0f172a;
-  color: #f1f5f9;
+  background: var(--bg);
+  background-image:
+    radial-gradient(900px circle at 12% -10%, rgba(59, 130, 246, 0.1), transparent 55%),
+    radial-gradient(720px circle at 100% 0%, rgba(99, 102, 241, 0.09), transparent 50%);
+  background-attachment: fixed;
+  color: var(--text);
   line-height: 1.5;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: #3b82f6;
+  background: var(--accent);
   color: white;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 3px;
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+  background-clip: padding-box;
 }
